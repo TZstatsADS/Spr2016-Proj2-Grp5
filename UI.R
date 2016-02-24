@@ -25,6 +25,7 @@ shinyUI(fluidPage(
                          sliderInput("IntHour", "Start time (of the first date)", 0, 24, 18, step = 1),
                          sliderInput("EndHour", "End time (of the last date)", 0, 24, 20, step = 1),
                          sliderInput("Amount", "Number of trips to display", 1, 1000, 50, step =10),
+                         sliderInput("ClusterCenters", "Number of Cluster Centers", 1,8, 4, step = 1),
                          submitButton("Submit"),
                          style = "opacity : 0.85"
                          ),

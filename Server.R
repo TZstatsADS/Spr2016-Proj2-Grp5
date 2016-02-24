@@ -5,13 +5,14 @@ library(leaflet)
 library(data.table)
 library(dplyr)
 library(htmltools)
-
+library(spatstat)
 # Import filtered data
 yellowpickup<-fread('./yellowpickup.csv')
 yellowdropoff<-fread('./yellowdropoff.csv')
 
-point = makeIcon("./doc/blue.png", 13, 13)
+point = makeIcon("./doc/blue.png", 9, 9)
 alpha = 0.007
+pt = makeIcon("./doc/teal.png", 16, 16)
 
 # Begin server code
 shinyServer(function(input, output){
@@ -52,29 +53,38 @@ shinyServer(function(input, output){
     amount <- input$Amount
   })
 
+  clust_amount <- reactive({
+    clust_amount <- input$ClusterCenters
+  })
   # Draw map
   output$map <- renderLeaflet({
+    dat = temp()[c(sample(1:dim(temp())[1], amount())),]
+    km <- kmeans(cbind(dat$dropoff_latitude, dat$dropoff_longitude), centers = clust_amount())
+    km_c <- km$centers
           if (type() == "Start"){
-                  leaflet(data = temp()[c(sample(1:dim(temp())[1], amount())),]) %>% 
+                  leaflet(data = dat) %>% 
                           addTiles() %>% 
                           setView(lng = -73.971035, lat = 40.775659, zoom = 12) %>% 
-                          addMarkers(~dropoff_longitude, ~dropoff_latitude, 
-                                     icon= point, 
-                                     popup = ~ as.character(paste("Fare: ", fare_amount, 
-                                                                  "Tip: ", tip_amount, 
-                                                                  "Ratio: ", round(tip_amount/fare_amount, 3)))
-                          )
+                          addMarkers(~dropoff_longitude, ~dropoff_latitude,
+                                     icon= point,
+                                     popup = ~ as.character(paste(" Fare: $", fare_amount,
+                                                                  " Tip: $", tip_amount,
+                                                                  " Percent Tip: ", 100*round(tip_amount/fare_amount, 3), "%", sep = ""))
+                          ) %>%
+                          addMarkers(km_c[,2], km_c[,1], icon = pt)
+                            
           }
           else{
-                  leaflet(data = temp()[c(sample(1:dim(temp())[1], amount())),]) %>% 
+                  leaflet(data = dat) %>% 
                           addTiles() %>% 
                           setView(lng = -73.971035, lat = 40.775659, zoom = 12) %>% 
-                          addMarkers(~pickup_longitude, ~pickup_latitude, 
-                                     icon= point, 
-                                     popup = ~ as.character(paste("Fare: ", fare_amount, 
-                                                                  "Tip: ", tip_amount, 
-                                                                  "Ratio: ", round(tip_amount/fare_amount, 3)))
-                          )
+                          addMarkers(~pickup_longitude, ~pickup_latitude,
+                                     icon= point,
+                                     popup = ~ as.character(paste("Fare: $", fare_amount,
+                                                                  "Tip: $", tip_amount,
+                                                                  "Percent Tip: ", 100*round(tip_amount/fare_amount, 3), "%", sep = ""))
+                          ) %>%
+                          addMarkers(km_c[,2], km_c[,1], icon = pt)
           }
 
   })

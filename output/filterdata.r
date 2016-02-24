@@ -17,7 +17,8 @@ yellowfiltered <- filter(yellow, (((Ini_longitude - yellow$pickup_longitude) ^ 2
 
 
 
-write.csv(yellowfiltered,"yellowfiltered.csv")setwd("C:/Users/ouwen/Desktop/Project2")
+write.csv(yellowfiltered,"yellowfiltered.csv")
+setwd("C:/Users/ouwen/Desktop/Project2")
 yellowdata <- fread("yellowfiltered.csv")
 intdate <- as.Date("2015-02-01 00:00:00")
 enddate <- as.Date("2015-02-28 23:59:59")

@@ -6,17 +6,16 @@ library(data.table)
 library(dplyr)
 library(htmltools)
 
-setwd("D:/Download/Chrome/yellow")
 # Import filtered data
-yellowpickup<-fread('yellowpickup.csv')
-yellowdropoff<-fread('yellowdropoff.csv')
+yellowpickup<-fread('./yellowpickup.csv')
+yellowdropoff<-fread('./yellowdropoff.csv')
 
-point = makeIcon("blue.png", 13, 13)
+point = makeIcon("./doc/blue.png", 13, 13)
 alpha = 0.007
 
 # Begin server code
 shinyServer(function(input, output){
-        #set date
+  # Set dates
   intdate <- reactive({
     intdate <- as.POSIXct(paste(as.character(input$Day[1]), 
                                 as.character(input$IntHour)), 

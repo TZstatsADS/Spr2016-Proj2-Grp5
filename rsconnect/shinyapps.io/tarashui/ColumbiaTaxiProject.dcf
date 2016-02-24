@@ -1,8 +1,8 @@
 name: ColumbiaTaxiProject
 account: tarashui
 server: shinyapps.io
-bundleId: 379471
+bundleId: 379713
 url: https://tarashui.shinyapps.io/ColumbiaTaxiProject/
-when: 1456333412.94431
+when: 1456349227.85236
 asMultiple: FALSE
 asStatic: FALSE

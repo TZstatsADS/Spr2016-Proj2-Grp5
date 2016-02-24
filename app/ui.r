@@ -31,5 +31,6 @@ shinyUI(fluidPage(
                 mainPanel(
                                 leafletOutput("map", width = "150%", height = 700)
                         )
-                )
+                ),
+  plotOutput('plot', width = '100%', height = 1000)
 ))

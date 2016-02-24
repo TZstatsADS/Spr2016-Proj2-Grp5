@@ -5,16 +5,23 @@ library(leaflet)
 library(data.table)
 library(dplyr)
 library(htmltools)
+library(ggplot2)
 
 # Import filtered data
 yellowpickup<-fread('../data/yellowpickup.csv')
 yellowdropoff<-fread('../data/yellowdropoff.csv')
+
+# Data manipulation for fare-tip scatterplot
+yellow <- rbind(yellowpickup, yellowdropoff)
+yellownew <- yellow[c(sample(1:246816), 100),]
+yellowfiltered <- yellownew %>% filter (fare_amount >= 0, fare_amount <= 100, tip_amount <= 100)
 
 point = makeIcon("../doc/blue.png", 13, 13)
 alpha = 0.007
 
 # Begin server code
 shinyServer(function(input, output){
+  
   # Set dates
   intdate <- reactive({
     intdate <- as.POSIXct(paste(as.character(input$Day[1]), 
@@ -42,11 +49,6 @@ shinyServer(function(input, output){
                                                            tpep_pickup_datetime <= enddate())
           }
   })
-
-#   temp <- reactive({
-#     temp <- yellowpickup %>% filter(tpep_pickup_datetime >= intdate(), 
-#                                   tpep_pickup_datetime <= enddate())
-#   })
   
   amount <- reactive({
     amount <- input$Amount
@@ -79,54 +81,9 @@ shinyServer(function(input, output){
 
   })
   
-#   longtitude <- reactive({
-#           if ( type() == "Start"){
-#           longtitude <- temp()$dropoff_longtitude
-#   }
-#   else {
-#           longtitude <- temp()$pickup_longtitude
-#   }
-#   })
-#           
-# latitude <- reactive({
-#         if ( type() == "Start"){
-#                 
-#                 latitude <- temp()$dropoff_latitude
-#         }
-#         else{
-#                 
-#                 latitude <- temp()$pickup_latitude
-#         }
-# })
-# 
-# showpopup <- function(eventid, lat, lng){
-#         leafletProxy("map") %>% addPopups(lng, lat, "hello", layerId = eventid)
-# }
-# 
-# observe({
-#         leafletProxy("map") %>% clearPopups()
-#         event <- input$map_click
-#         if (is.null(event))
-#                 return()
-#         isolate({
-#                 showpopup(event$id, event$lat, event$lng)
-#         })
-# })
-# #  observeEvent(input$map_click, {
-# #          
-# #          click <- input$map_click
-# #          clat <- click$lat
-# #          clng <- click$lng
-# #          text <- as.character(paste("love you"))
-# #          
-# #          leafletProxy("map") %>% 
-# #                  addPopups(lng = clng, lat = clat, text, layerId = click$id)
-# #  })
-# #          areaselect <- filter(temp(), (((clng - longtitude()) ^ 2 + (clat - latitude()) ^ 2) <= alpha^2))
-# #          
-# #          tempfare <- round(mean(areaselect$fare_amount),2)
-# #          temptip <- round(mean(areaselect$tip_amount),2)
-# #          text <- paste("Fare:", tempfare, "Tip:", "temptip")
-# 
-#   # })
+  output$plot <- renderPlot({
+    qplot(fare_amount,  tip_amount, data = yellowfiltered, 
+          xlab = 'Fare Amount', ylab = 'Tip Amount'
+    )
+  })
 })

@@ -1,54 +1,23 @@
 library(ggvis)
-
-# For dropdown menu
-actionLink <- function(inputId, ...) {
-        tags$a(href='javascript:void',
-               id=inputId,
-               class='action-button',
-               ...)
-}
+library(leaflet)
 
 shinyUI(fluidPage(
         titlePanel("Life, out of Campus"),
-        fluidRow(
-                column(3,
-                       wellPanel(
+        
+        sidebarLayout(position = "right",
+                       sidebarPanel(
                                h4("Filter"),
-                               sliderInput("Day", "Someday in Feburary",
-                                           01, 28, 80, step = 1),
-                               sliderInput("hour", "Sometime in that day", 
-                                           0000, 2400, value = c(1970, 2014)),
-                               sliderInput("oscars", "Minimum number of Oscar wins (all categories)",
-                                           0, 4, 0, step = 1),
-                               sliderInput("boxoffice", "Dollars at Box Office (millions)",
-                                           0, 800, c(0, 800), step = 1),
-                               selectInput("Fare", "Fare (View for fare and tips)",
-                                           c("All", "Action", "Adventure", "Animation", "Biography", "Comedy",
-                                             "Crime", "Documentary", "Drama", "Family", "Fantasy", "History",
-                                             "Horror", "Music", "Musical", "Mystery", "Romance", "Sci-Fi",
-                                             "Short", "Sport", "Thriller", "War", "Western")
+                               dateRangeInput("Day", "someday in February", start = "2015-02-01", end = "2015-02-28", min = "2015-02-01", max = "2015-02-28"),
+                               sliderInput("IntHour", "Hour of the first Day", 0, 24, 0, step = 1),
+                               sliderInput("EndHour", "Hour of the last Day", 0, 24, 0, step =1),
+                               sliderInput("Amount", "Amount of trips to display", 1, 1000, 100, step =10),
+                               submitButton("Submit"),
+                               style = "opacity : 0.85"
                                ),
-                               textInput("director", "Director name contains (e.g., Miyazaki)"),
-                               textInput("cast", "Cast names contains (e.g. Tom Hanks)")
-                       ),
-                       wellPanel(
-                               selectInput("xvar", "X-axis variable", axis_vars, selected = "Meter"),
-                               selectInput("yvar", "Y-axis variable", axis_vars, selected = "Reviews"),
-                               tags$small(paste0(
-                                       "Note: The Tomato Meter is the proportion of positive reviews",
-                                       " (as judged by the Rotten Tomatoes staff), and the Numeric rating is",
-                                       " a normalized 1-10 score of those reviews which have star ratings",
-                                       " (for example, 3 out of 4 stars)."
-                               ))
-                       )
-                ),
-                column(9,
-                       ggvisOutput("plot1"),
-                       wellPanel(
-                               span("Number of movies selected:",
-                                    textOutput("n_movies")
-                               )
-                       )
-                )
+                      mainPanel(
+                              leafletOutput("map", width = "150%", height = 700)
+                                )
+
         )
-))
+)
+)

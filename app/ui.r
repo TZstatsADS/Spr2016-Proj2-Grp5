@@ -1,40 +1,23 @@
-library(shiny)
+library(ggvis)
+library(leaflet)
 
-# Define UI for application that draws a histogram
 shinyUI(fluidPage(
-  
-  # Application title
-  titlePanel("2009 Manhattan Housing Sales"),
-  
-  # Sidebar with a selector input for neighborhood
-  sidebarLayout(
-    sidebarPanel(
-      selectInput("nbhd", label = h5("Choose a Manhattan Neighborhood"), 
-                         choices = list("all neighborhoods"=0,
-                                        "Central Harlem"=1, 
-                                        "Chelsea and Clinton"=2,
-                                        "East Harlem"=3, 
-                                        "Gramercy Park and Murray Hill"=4,
-                                        "Greenwich Village and Soho"=5, 
-                                        "Lower Manhattan"=6,
-                                        "Lower East Side"=7, 
-                                        "Upper East Side"=8, 
-                                        "Upper West Side"=9,
-                                        "Inwood and Washington Heights"=10), 
-                         selected = 0)
-      #sliderInput("p.range", label=h3("Price Range (in thousands of dollars)"),
-      #            min = 0, max = 20000, value = c(200, 10000))
-    ),
-    # Show two panels
-    mainPanel(
-      #h4(textOutput("text")),
-      h3(code(textOutput("text1"))),
-      tabsetPanel(
-        # Panel 1 has three summary plots of sales. 
-        tabPanel("Sales summary", plotOutput("distPlot")), 
-        # Panel 2 has a map display of sales' distribution
-        tabPanel("Sales map", plotOutput("distPlot1")))
-    )
- )
-))
+        titlePanel("Life, out of Campus"),
+        
+        sidebarLayout(position = "right",
+                       sidebarPanel(
+                               h4("Filter"),
+                               dateRangeInput("Day", "someday in February", start = "2015-02-01", end = "2015-02-28", min = "2015-02-01", max = "2015-02-28"),
+                               sliderInput("IntHour", "Hour of the first Day", 0, 24, 0, step = 1),
+                               sliderInput("EndHour", "Hour of the last Day", 0, 24, 0, step =1),
+                               sliderInput("Amount", "Amount of trips to display", 1, 1000, 100, step =10),
+                               submitButton("Submit"),
+                               style = "opacity : 0.85"
+                               ),
+                      mainPanel(
+                              leafletOutput("map", width = "150%", height = 700)
+                                )
 
+        )
+)
+)

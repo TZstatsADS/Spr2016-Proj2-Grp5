@@ -7,10 +7,10 @@ library(dplyr)
 library(htmltools)
 
 # Import filtered data
-yellowpickup<-fread('./yellowpickup.csv')
-yellowdropoff<-fread('./yellowdropoff.csv')
+yellowpickup<-fread('../data/yellowpickup.csv')
+yellowdropoff<-fread('../data/yellowdropoff.csv')
 
-point = makeIcon("./doc/blue.png", 13, 13)
+point = makeIcon("../doc/blue.png", 13, 13)
 alpha = 0.007
 
 # Begin server code
